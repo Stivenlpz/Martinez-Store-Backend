@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+  KIDS
+}
+
+enum OrderStatus {
+  PENDING // creado pero no pagado / en proceso
+  PAID // pago recibido
+  PROCESSING // preparando envío
+  SHIPPED // enviado
+  DELIVERED // entregado
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum ShippingStatus {
+  NOT_SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  password    String
+  name        String?
+  phone       String?
+  activated   Boolean      @default(false) // se activa via email
+  role        Role         @default(USER)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
+  // Datos personales / dirección rápida (puedes preferir usar Address model)
+  city        String?
+  country     String?
+  // Relaciones
+  addresses   Address[]
+  cart        Cart?
+  orders      Order[]
+  loginAudits LoginAudit[]
+  meta        Json?
+}
+
+model Address {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String    @db.ObjectId
+  label      String? // "Casa", "Trabajo", etc.
+  street     String
+  city       String
+  state      String?
+  postalCode String?
+  country    String
+  phone      String?
+  isDefault  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  Order      Order[]
+}
+
+model LoginAudit {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  success   Boolean  @default(true)
+  meta      Json?
+}
+
+model Cart {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String     @unique @db.ObjectId
+  items     CartItem[]
+  updatedAt DateTime?  @updatedAt
+  createdAt DateTime   @default(now())
+}
+
+model CartItem {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  cart       Cart    @relation(fields: [cartId], references: [id])
+  cartId     String  @db.ObjectId
+  product    Product @relation(fields: [productId], references: [id])
+  productId  String  @db.ObjectId
+  quantity   Int     @default(1)
+  // campos para variantes simples (talla/color) — opcionales
+  size       String?
+  color      String?
+  priceAtAdd Float // guardar precio al momento de agregar
+  meta       Json?
+}
+
+model Product {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  sku         String?     @unique
+  name        String
+  slug        String?     @unique
+  description String?
+  price       Float
+  // Stock total — si quieres stock por variante deberíamos modelar Variants
+  stock       Int         @default(0)
+  // Tags, categorías y arrays útiles para ecom
+  categories  String[] // ej: ["camisetas","hombre"]
+  images      String[] // URLs
+  sizes       String[] // ej ["S","M","L","XL"]
+  colors      String[] // ej ["negro","blanco"]
+  featured    Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?   @updatedAt
+  gender      Gender
+  // Relaciones
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+  meta        Json?
+}
+
+model Order {
+  id                     String         @id @default(auto()) @map("_id") @db.ObjectId
+  user                   User           @relation(fields: [userId], references: [id])
+  userId                 String         @db.ObjectId
+  items                  OrderItem[]
+  totalAmount            Float
+  currency               String         @default("COP")
+  status                 OrderStatus    @default(PENDING)
+  paymentStatus          PaymentStatus  @default(UNPAID)
+  shippingStatus         ShippingStatus @default(NOT_SHIPPED)
+  init_point             String         @default("")
+  // Información de envío editable (para seguimiento)
+  shippingAddress        Address?       @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId      String?        @db.ObjectId
+  shippingCarrier        String?        @default("")
+  shippingTrackingNumber String?        @default("")
+  shippingNotes          String?        @default("")
+  // Campos para historial de cambios (puedes guardar un log)
+  history                Json[] // array con cambios {date,by,from,to,reason}
+  payment                Json? // respuesta del gateway (MercadoPago) para trazabilidad
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime?      @updatedAt
+  canceledAt             DateTime?
+  deliveredAt            DateTime?
+  refundedAt             DateTime?
+  meta                   Json?
+}
+
+model OrderItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  name      String
+  sku       String?
+  quantity  Int     @default(1)
+  price     Float // price per unit at time of order
+  size      String?
+  color     String?
+  meta      Json?
+}
