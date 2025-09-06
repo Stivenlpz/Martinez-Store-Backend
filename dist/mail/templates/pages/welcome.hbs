@@ -1,0 +1,28 @@
+{{#> layout}}
+  <h1 style="color: #333; text-align: center;">¡Gracias por crear tu cuenta en Market!</h1>
+  
+  <p style="font-size: 16px; color: #333;">Hola <strong>{{fullnames}}</strong>,</p>
+  
+  <p style="font-size: 16px; color: #333;">
+    Has creado una cuenta en nuestra web, pero primero necesitamos que verifiques tu cuenta haciendo clic en el botón de abajo:
+  </p>
+  
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="{{activationLink}}" class="btn" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white !important; text-decoration: none !important; border-radius: 5px; font-weight: bold;">
+      ✅ Activar mi cuenta
+    </a>
+  </div>
+  
+  <p style="font-size: 14px; color: #666;">
+    Si el botón no funciona, puedes copiar y pegar este enlace en tu navegador:
+  </p>
+  
+  <p class="link-text" style="word-break: break-all; color: #007bff; font-size: 12px; background-color: #f8f9fa; padding: 10px; border-radius: 4px;">
+    {{activationLink}}
+  </p>
+  
+  <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+  
+  <p class="muted" style="color: #666; font-size: 14px;">Gracias por confiar en nosotros</p>
+  <p class="muted" style="color: #666; font-size: 14px;"><strong>Atentamente, el equipo de Market</strong></p>
+{{/layout}}
