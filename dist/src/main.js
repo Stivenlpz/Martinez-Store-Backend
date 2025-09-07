@@ -18,8 +18,8 @@ async function bootstrap() {
     }));
     app.useGlobalInterceptors(new common_1.ClassSerializerInterceptor(app.get(core_1.Reflector)));
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('QueBoleta API')
-        .setDescription('The QueBoleta API Documentation')
+        .setTitle('MARKET')
+        .setDescription('API')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
