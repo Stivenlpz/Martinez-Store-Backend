@@ -59,6 +59,8 @@ model User {
   // Datos personales / dirección rápida (puedes preferir usar Address model)
   city        String?
   country     String?
+  isLocked    Boolean      @default(false)
+  lockedUntil DateTime?
   // Relaciones
   addresses   Address[]
   cart        Cart?

@@ -11,14 +11,14 @@ async function main() {
 
   const user1 = await prisma.user.upsert({
     where: {
-      email: 'camilodavila@gmail.com',
+      email: 'brahians.lopezc@uqvirtual.edu.co',
     },
     update: {
       password: password1,
     },
     create: {
-      name: 'camilo davila',
-      email: 'camilodavila@gmail.com',
+      name: 'Brahian Steven Lopez Ceballos ',
+      email: 'brahians.lopezc@uqvirtual.edu.co',
       password: password1,
       phone: '1234567890',
       role: 'ADMIN',
@@ -31,17 +31,18 @@ async function main() {
 
   const user2 = await prisma.user.upsert({
     where: {
-      email: 'esteban@gmail.com',
+      email: 'daniela.peñag@uqvirtual.edu.co',
     },
     update: {
       password: password2,
     },
     create: {
-      name: 'esteban davila',
-      email: 'esteban@gmail.com',
+      name: 'Daniela Peña Gómez',
+      email: 'daniela.peñag@uqvirtual.edu.co',
       password: password2,
       phone: '1234567890',
-      role: 'USER',
+      role: 'ADMIN',
+      activated: true,
       cart: {
         create: {},
       },
