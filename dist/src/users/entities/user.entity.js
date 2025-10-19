@@ -24,6 +24,8 @@ class UserEntity {
     city;
     country;
     cartId;
+    isLocked;
+    lockedUntil;
     createdAt;
     updatedAt;
     meta;
@@ -108,6 +110,20 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], UserEntity.prototype, "cartId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Esta bloqueado?',
+        required: true,
+        default: false,
+    }),
+    __metadata("design:type", Boolean)
+], UserEntity.prototype, "isLocked", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Tiempo de bloqueo',
+    }),
+    __metadata("design:type", Object)
+], UserEntity.prototype, "lockedUntil", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Fecha de creación',

@@ -23,7 +23,7 @@ export class MailService {
   }
 
   async sendWelcomeEmail(user: User) {
-    const activationLink = `${process.env.FRONTEND_URL}/activate/${user.id}`;
+    const activationLink = `${process.env.FRONTEND_URL}/auth/activate/${user.id}`;
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Bienvenido a Market',
@@ -38,7 +38,7 @@ export class MailService {
   async sendLoginEmail(user: User) {
     await this.mailerService.sendMail({
       to: user.email,
-      subject: '⚡ Inicio de sesión detectado',
+      subject: 'Inicio de sesión detectado',
       template: 'login',
       context: {
         fullnames: user.name,
@@ -97,7 +97,7 @@ export class MailService {
       subject: `Order ${order.id} paid successfully`,
       template: 'order-paid',
       context: {
-        orderId: order.id,
+        url: `${process.env.FRONTEND_URL}/orders/${order.id}`,
       },
     });
 
@@ -121,7 +121,7 @@ export class MailService {
       subject: `Order ${order.id} was rejected.`,
       template: 'order-rejected',
       context: {
-        orderId: order.id,
+        url: `${process.env.FRONTEND_URL}/orders/${order.id}`,
       },
     });
 

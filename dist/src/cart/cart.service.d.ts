@@ -5,6 +5,35 @@ export declare class CartService {
     private ordersService;
     constructor(prisma: PrismaService, ordersService: OrdersService);
     findAll(): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date | null;
+                meta: import("@prisma/client/runtime/library").JsonValue | null;
+                sku: string | null;
+                slug: string | null;
+                description: string | null;
+                price: number;
+                stock: number;
+                categories: string[];
+                images: string[];
+                sizes: string[];
+                colors: string[];
+                featured: boolean;
+                gender: import("@prisma/client").$Enums.Gender;
+            };
+        } & {
+            id: string;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            cartId: string;
+            productId: string;
+            quantity: number;
+            size: string | null;
+            color: string | null;
+            priceAtAdd: number;
+        })[];
         user: {
             id: string;
             email: string;
@@ -17,37 +46,10 @@ export declare class CartService {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date | null;
-                meta: import("@prisma/client/runtime/library").JsonValue | null;
-                sku: string | null;
-                price: number;
-                slug: string | null;
-                description: string | null;
-                stock: number;
-                categories: string[];
-                images: string[];
-                sizes: string[];
-                colors: string[];
-                featured: boolean;
-                gender: import("@prisma/client").$Enums.Gender;
-            };
-        } & {
-            id: string;
-            meta: import("@prisma/client/runtime/library").JsonValue | null;
-            quantity: number;
-            size: string | null;
-            color: string | null;
-            productId: string;
-            cartId: string;
-            priceAtAdd: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -55,6 +57,35 @@ export declare class CartService {
         userId: string;
     })[]>;
     findOne(id: string): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date | null;
+                meta: import("@prisma/client/runtime/library").JsonValue | null;
+                sku: string | null;
+                slug: string | null;
+                description: string | null;
+                price: number;
+                stock: number;
+                categories: string[];
+                images: string[];
+                sizes: string[];
+                colors: string[];
+                featured: boolean;
+                gender: import("@prisma/client").$Enums.Gender;
+            };
+        } & {
+            id: string;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            cartId: string;
+            productId: string;
+            quantity: number;
+            size: string | null;
+            color: string | null;
+            priceAtAdd: number;
+        })[];
         user: {
             id: string;
             email: string;
@@ -67,37 +98,10 @@ export declare class CartService {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date | null;
-                meta: import("@prisma/client/runtime/library").JsonValue | null;
-                sku: string | null;
-                price: number;
-                slug: string | null;
-                description: string | null;
-                stock: number;
-                categories: string[];
-                images: string[];
-                sizes: string[];
-                colors: string[];
-                featured: boolean;
-                gender: import("@prisma/client").$Enums.Gender;
-            };
-        } & {
-            id: string;
-            meta: import("@prisma/client/runtime/library").JsonValue | null;
-            quantity: number;
-            size: string | null;
-            color: string | null;
-            productId: string;
-            cartId: string;
-            priceAtAdd: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -116,9 +120,9 @@ export declare class CartService {
                     updatedAt: Date | null;
                     meta: import("@prisma/client/runtime/library").JsonValue | null;
                     sku: string | null;
-                    price: number;
                     slug: string | null;
                     description: string | null;
+                    price: number;
                     stock: number;
                     categories: string[];
                     images: string[];
@@ -131,13 +135,13 @@ export declare class CartService {
                 id: string;
                 name: string;
                 meta: import("@prisma/client/runtime/library").JsonValue | null;
-                orderId: string;
-                sku: string | null;
+                productId: string;
                 quantity: number;
-                price: number;
                 size: string | null;
                 color: string | null;
-                productId: string;
+                sku: string | null;
+                price: number;
+                orderId: string;
             })[];
         } & {
             id: string;

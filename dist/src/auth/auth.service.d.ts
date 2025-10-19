@@ -10,7 +10,7 @@ export declare class AuthService {
     private auditService;
     private mailService;
     constructor(prisma: PrismaService, jwtService: JwtService, auditService: AuditsService, mailService: MailService);
-    login(email: string, password: string, req: Request): Promise<{
+    login(email: string, password: string, captchaToken: string, req: Request): Promise<{
         message: string;
         accessToken: string;
     }>;
@@ -58,6 +58,8 @@ export declare class AuthService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     deactiveUser(userId: string): Promise<{
@@ -101,12 +103,18 @@ export declare class AuthService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
+    verifyRequestReset(token: string): {
+        message: string;
+    };
     requestPasswordReset(email: string): Promise<{
         message: string;
     }>;
     resetPassword(token: string, newPassword: string): Promise<{
         message: string;
     }>;
+    private verifyHcaptcha;
 }

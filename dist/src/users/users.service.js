@@ -51,6 +51,7 @@ let UsersService = class UsersService {
             include: {
                 addresses: true,
                 orders: true,
+                loginAudits: true,
                 cart: {
                     include: {
                         items: {
@@ -87,6 +88,7 @@ let UsersService = class UsersService {
         return await this.prisma.user.findUnique({
             where: { id: userId },
             include: {
+                loginAudits: true,
                 cart: {
                     include: {
                         items: {

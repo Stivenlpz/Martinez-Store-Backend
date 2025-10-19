@@ -49,6 +49,13 @@ export class AddressController {
     return this.addressService.findOne(id);
   }
 
+  @Get('/user/:id')
+  @ApiOperation({ summary: 'Retrieve user addresses' })
+  @ApiOkResponse({ type: [AddressEntity] })
+  userAddress(@Param('id') id: string) {
+    return this.addressService.userAddress(id);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update an address by ID' })
   @ApiOkResponse({ type: AddressEntity })

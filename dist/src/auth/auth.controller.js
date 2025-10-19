@@ -26,12 +26,16 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async login({ email, password }, req, res) {
-        const payload = await this.authService.login(email, password, req);
+    async login({ email, password, captchaToken }, req, res) {
+        const payload = await this.authService.login(email, password, captchaToken, req);
         res.cookie('token', payload.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
+            domain: process.env.NODE_ENV === 'production'
+                ? '.martinezboutique.store'
+                : undefined,
+            path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         return payload;
@@ -50,10 +54,16 @@ let AuthController = class AuthController {
     logout(res) {
         res.clearCookie('token', {
             httpOnly: true,
-            sameSite: 'strict',
+            sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production',
+            domain: process.env.NODE_ENV === 'production'
+                ? '.martinezboutique.store'
+                : undefined,
         });
         return { message: 'Logged out successfully' };
+    }
+    requestVerify({ token }) {
+        return this.authService.verifyRequestReset(token);
     }
     async requestPasswordReset({ email }) {
         return await this.authService.requestPasswordReset(email);
@@ -110,6 +120,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    (0, common_1.Post)('/request-verify'),
+    (0, swagger_1.ApiOkResponse)({ description: 'message with value' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "requestVerify", null);
 __decorate([
     (0, common_1.Post)('/request-reset'),
     (0, swagger_1.ApiOperation)({ summary: 'Request password reset email' }),

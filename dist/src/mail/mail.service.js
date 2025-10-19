@@ -32,7 +32,7 @@ let MailService = MailService_1 = class MailService {
         this.logger.log(`Email sent to ${to} with subject: ${subject}`);
     }
     async sendWelcomeEmail(user) {
-        const activationLink = `${process.env.FRONTEND_URL}/activate/${user.id}`;
+        const activationLink = `${process.env.FRONTEND_URL}/auth/activate/${user.id}`;
         await this.mailerService.sendMail({
             to: user.email,
             subject: 'Bienvenido a Market',
@@ -46,7 +46,7 @@ let MailService = MailService_1 = class MailService {
     async sendLoginEmail(user) {
         await this.mailerService.sendMail({
             to: user.email,
-            subject: '⚡ Inicio de sesión detectado',
+            subject: 'Inicio de sesión detectado',
             template: 'login',
             context: {
                 fullnames: user.name,
@@ -94,7 +94,7 @@ let MailService = MailService_1 = class MailService {
             subject: `Order ${order.id} paid successfully`,
             template: 'order-paid',
             context: {
-                orderId: order.id,
+                url: `${process.env.FRONTEND_URL}/orders/${order.id}`,
             },
         });
         this.logger.log(`payment approved email send`);
@@ -114,7 +114,7 @@ let MailService = MailService_1 = class MailService {
             subject: `Order ${order.id} was rejected.`,
             template: 'order-rejected',
             context: {
-                orderId: order.id,
+                url: `${process.env.FRONTEND_URL}/orders/${order.id}`,
             },
         });
         this.logger.log(`payment rejected email send`);

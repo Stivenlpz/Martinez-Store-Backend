@@ -10,6 +10,8 @@ export declare class UserEntity implements User {
     city: string | null;
     country: string | null;
     cartId: string | null;
+    isLocked: boolean;
+    lockedUntil: Date | null;
     createdAt: Date;
     updatedAt: Date | null;
     meta: Prisma.JsonValue | null;

@@ -15,6 +15,7 @@ import { AuditsModule } from './audits/audits.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 import { PaymentsModule } from './payments/payments.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PaymentsModule } from './payments/payments.module';
     AuditsModule,
     CartItemsModule,
     OrderItemsModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],

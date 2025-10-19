@@ -73,6 +73,18 @@ export class UserEntity implements User {
   cartId: string | null;
 
   @ApiProperty({
+    description: 'Esta bloqueado?',
+    required: true,
+    default: false,
+  })
+  isLocked: boolean;
+
+  @ApiProperty({
+    description: 'Tiempo de bloqueo',
+  })
+  lockedUntil: Date | null;
+
+  @ApiProperty({
     description: 'Fecha de creación',
     example: '2025-09-03T10:15:00.000Z',
   })

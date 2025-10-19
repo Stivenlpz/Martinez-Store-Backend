@@ -16,9 +16,9 @@ export declare class OrdersController {
                     updatedAt: Date | null;
                     meta: import("@prisma/client/runtime/library").JsonValue | null;
                     sku: string | null;
-                    price: number;
                     slug: string | null;
                     description: string | null;
+                    price: number;
                     stock: number;
                     categories: string[];
                     images: string[];
@@ -31,13 +31,13 @@ export declare class OrdersController {
                 id: string;
                 name: string;
                 meta: import("@prisma/client/runtime/library").JsonValue | null;
-                orderId: string;
-                sku: string | null;
+                productId: string;
                 quantity: number;
-                price: number;
                 size: string | null;
                 color: string | null;
-                productId: string;
+                sku: string | null;
+                price: number;
+                orderId: string;
             })[];
         } & {
             id: string;
@@ -63,6 +63,18 @@ export declare class OrdersController {
         };
     }>;
     findAll(): Promise<({
+        items: {
+            id: string;
+            name: string;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            productId: string;
+            quantity: number;
+            size: string | null;
+            color: string | null;
+            sku: string | null;
+            price: number;
+            orderId: string;
+        }[];
         user: {
             id: string;
             email: string;
@@ -75,20 +87,10 @@ export declare class OrdersController {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
-        items: {
-            id: string;
-            name: string;
-            meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
-            sku: string | null;
-            quantity: number;
-            price: number;
-            size: string | null;
-            color: string | null;
-            productId: string;
-        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -112,20 +114,6 @@ export declare class OrdersController {
         refundedAt: Date | null;
     })[]>;
     findOne(id: string): Promise<{
-        user: {
-            id: string;
-            email: string;
-            password: string;
-            name: string | null;
-            phone: string | null;
-            activated: boolean;
-            role: import("@prisma/client").$Enums.Role;
-            createdAt: Date;
-            updatedAt: Date | null;
-            city: string | null;
-            country: string | null;
-            meta: import("@prisma/client/runtime/library").JsonValue | null;
-        };
         items: ({
             product: {
                 id: string;
@@ -134,9 +122,9 @@ export declare class OrdersController {
                 updatedAt: Date | null;
                 meta: import("@prisma/client/runtime/library").JsonValue | null;
                 sku: string | null;
-                price: number;
                 slug: string | null;
                 description: string | null;
+                price: number;
                 stock: number;
                 categories: string[];
                 images: string[];
@@ -149,14 +137,30 @@ export declare class OrdersController {
             id: string;
             name: string;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
-            sku: string | null;
+            productId: string;
             quantity: number;
-            price: number;
             size: string | null;
             color: string | null;
-            productId: string;
+            sku: string | null;
+            price: number;
+            orderId: string;
         })[];
+        user: {
+            id: string;
+            email: string;
+            password: string;
+            name: string | null;
+            phone: string | null;
+            activated: boolean;
+            role: import("@prisma/client").$Enums.Role;
+            createdAt: Date;
+            updatedAt: Date | null;
+            city: string | null;
+            country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+        };
     } & {
         id: string;
         createdAt: Date;
@@ -180,6 +184,18 @@ export declare class OrdersController {
         refundedAt: Date | null;
     }>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
+        items: {
+            id: string;
+            name: string;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            productId: string;
+            quantity: number;
+            size: string | null;
+            color: string | null;
+            sku: string | null;
+            price: number;
+            orderId: string;
+        }[];
         user: {
             id: string;
             email: string;
@@ -192,20 +208,10 @@ export declare class OrdersController {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
-        items: {
-            id: string;
-            name: string;
-            meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
-            sku: string | null;
-            quantity: number;
-            price: number;
-            size: string | null;
-            color: string | null;
-            productId: string;
-        }[];
     } & {
         id: string;
         createdAt: Date;

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -12,6 +13,7 @@ import { roundsOfHashing } from 'src/users/users.service';
 import { MailService } from 'src/mail/mail.service';
 import { Request } from 'express';
 import { AuditsService } from 'src/audits/audits.service';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -22,17 +24,23 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
-  async login(email: string, password: string, req: Request) {
+  async login(
+    email: string,
+    password: string,
+    captchaToken: string,
+    req: Request,
+  ) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      await this.auditService.register({
-        userId: 'unknown',
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] || 'unknown',
-        success: false,
-      });
       throw new NotFoundException(`No user found with ${email} email.`);
+    }
+
+    // 🚨 Revisar si la cuenta está bloqueada
+    if (user.isLocked && user.lockedUntil && user.lockedUntil > new Date()) {
+      throw new UnauthorizedException(
+        `Account locked until ${user.lockedUntil.toISOString()}`,
+      );
     }
 
     if (!user.activated) {
@@ -45,9 +53,63 @@ export class AuthService {
       throw new UnauthorizedException('User is inactive.');
     }
 
+    if (!captchaToken) {
+      throw new BadRequestException('CAPTCHA token is required.');
+    }
+
+    const isCaptchaValid = await this.verifyHcaptcha(captchaToken, req.ip);
+    if (!isCaptchaValid) {
+      await this.auditService.register({
+        userId: user.id,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] || 'unknown',
+        success: false,
+      });
+      throw new BadRequestException('CAPTCHA verification failed.');
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) throw new UnauthorizedException('Invalid password.');
+    if (!isPasswordValid) {
+      await this.auditService.register({
+        userId: user.id,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] || 'unknown',
+        success: false,
+      });
+
+      // 🚨 Contar intentos fallidos en los últimos 15 minutos
+      const failedAttempts = await this.prisma.loginAudit.count({
+        where: {
+          userId: user.id,
+          success: false,
+          createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) },
+        },
+      });
+
+      if (failedAttempts >= 5) {
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            isLocked: true,
+            lockedUntil: new Date(Date.now() + 30 * 60 * 1000), // 30 min
+          },
+        });
+        throw new UnauthorizedException(
+          'Too many failed attempts. Account locked for 30 minutes.',
+        );
+      }
+
+      throw new UnauthorizedException('Invalid password.');
+    }
+
+    // 🚨 Si login exitoso, desbloquear si estaba bloqueado
+    if (user.isLocked) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { isLocked: false, lockedUntil: null },
+      });
+    }
 
     await this.auditService.register({
       userId: user.id,
@@ -56,7 +118,7 @@ export class AuthService {
       success: true,
     });
 
-    await this.mailService.sendLoginEmail(user);
+    // await this.mailService.sendLoginEmail(user);
 
     return {
       message: 'Login successful',
@@ -129,6 +191,16 @@ export class AuthService {
     });
   }
 
+  verifyRequestReset(token: string) {
+    const payload: { userId: string } = this.jwtService.verify(token);
+
+    if (!payload) throw new UnauthorizedException('Invalid or expired token. ');
+
+    return {
+      message: 'Verified',
+    };
+  }
+
   async requestPasswordReset(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
@@ -167,6 +239,30 @@ export class AuthService {
     } catch (error) {
       console.error(error);
       throw new UnauthorizedException('Invalid or expired token.');
+    }
+  }
+
+  private async verifyHcaptcha(token: string, ip?: string): Promise<boolean> {
+    try {
+      const response = await axios.post(
+        'https://hcaptcha.com/siteverify',
+        new URLSearchParams({
+          secret: process.env.HCAPTCHA_SECRET!,
+          response: token,
+          remoteip: ip || '', // IP opcional pero recomendada
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return response.data.success;
+    } catch (error) {
+      console.error('Error verifying hCaptcha:', error);
+      return false;
     }
   }
 }

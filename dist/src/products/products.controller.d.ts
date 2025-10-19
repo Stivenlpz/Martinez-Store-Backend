@@ -18,9 +18,9 @@ export declare class ProductsController {
                     updatedAt: Date | null;
                     meta: import("@prisma/client/runtime/library").JsonValue | null;
                     sku: string | null;
-                    price: number;
                     slug: string | null;
                     description: string | null;
+                    price: number;
                     stock: number;
                     categories: string[];
                     images: string[];
@@ -33,13 +33,13 @@ export declare class ProductsController {
                 id: string;
                 name: string;
                 meta: import("@prisma/client/runtime/library").JsonValue | null;
-                orderId: string;
-                sku: string | null;
+                productId: string;
                 quantity: number;
-                price: number;
                 size: string | null;
                 color: string | null;
-                productId: string;
+                sku: string | null;
+                price: number;
+                orderId: string;
             })[];
         } & {
             id: string;
@@ -71,9 +71,9 @@ export declare class ProductsController {
         updatedAt: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
         sku: string | null;
-        price: number;
         slug: string | null;
         description: string | null;
+        price: number;
         stock: number;
         categories: string[];
         images: string[];
@@ -89,9 +89,9 @@ export declare class ProductsController {
         updatedAt: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
         sku: string | null;
-        price: number;
         slug: string | null;
         description: string | null;
+        price: number;
         stock: number;
         categories: string[];
         images: string[];
@@ -107,9 +107,9 @@ export declare class ProductsController {
         updatedAt: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
         sku: string | null;
-        price: number;
         slug: string | null;
         description: string | null;
+        price: number;
         stock: number;
         categories: string[];
         images: string[];
@@ -125,9 +125,9 @@ export declare class ProductsController {
         updatedAt: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
         sku: string | null;
-        price: number;
         slug: string | null;
         description: string | null;
+        price: number;
         stock: number;
         categories: string[];
         images: string[];
@@ -143,9 +143,9 @@ export declare class ProductsController {
         updatedAt: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
         sku: string | null;
-        price: number;
         slug: string | null;
         description: string | null;
+        price: number;
         stock: number;
         categories: string[];
         images: string[];

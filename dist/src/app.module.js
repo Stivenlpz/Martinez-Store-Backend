@@ -24,6 +24,7 @@ const audits_module_1 = require("./audits/audits.module");
 const cart_items_module_1 = require("./cart-items/cart-items.module");
 const order_items_module_1 = require("./order-items/order-items.module");
 const payments_module_1 = require("./payments/payments.module");
+const stats_module_1 = require("./stats/stats.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -43,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
             audits_module_1.AuditsModule,
             cart_items_module_1.CartItemsModule,
             order_items_module_1.OrderItemsModule,
+            stats_module_1.StatsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, cloudinary_service_1.CloudinaryService],

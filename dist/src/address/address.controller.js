@@ -34,6 +34,9 @@ let AddressController = class AddressController {
     findOne(id) {
         return this.addressService.findOne(id);
     }
+    userAddress(id) {
+        return this.addressService.userAddress(id);
+    }
     update(id, updateAddressDto) {
         return this.addressService.update(id, updateAddressDto);
     }
@@ -68,6 +71,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], AddressController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)('/user/:id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Retrieve user addresses' }),
+    (0, swagger_1.ApiOkResponse)({ type: [address_entity_1.AddressEntity] }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AddressController.prototype, "userAddress", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Update an address by ID' }),

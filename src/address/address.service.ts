@@ -25,6 +25,14 @@ export class AddressService {
     });
   }
 
+  async userAddress(id: string) {
+    return await this.prisma.address.findMany({
+      where: {
+        userId: id,
+      },
+    });
+  }
+
   async update(id: string, updateAddressDto: UpdateAddressDto) {
     return await this.prisma.address.update({
       where: {

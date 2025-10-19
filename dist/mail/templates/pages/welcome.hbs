@@ -1,28 +1,92 @@
-{{#> layout}}
-  <h1 style="color: #333; text-align: center;">¡Gracias por crear tu cuenta en Market!</h1>
-  
-  <p style="font-size: 16px; color: #333;">Hola <strong>{{fullnames}}</strong>,</p>
-  
-  <p style="font-size: 16px; color: #333;">
-    Has creado una cuenta en nuestra web, pero primero necesitamos que verifiques tu cuenta haciendo clic en el botón de abajo:
-  </p>
-  
-  <div style="text-align: center; margin: 30px 0;">
-    <a href="{{activationLink}}" class="btn" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white !important; text-decoration: none !important; border-radius: 5px; font-weight: bold;">
-      ✅ Activar mi cuenta
-    </a>
-  </div>
-  
-  <p style="font-size: 14px; color: #666;">
-    Si el botón no funciona, puedes copiar y pegar este enlace en tu navegador:
-  </p>
-  
-  <p class="link-text" style="word-break: break-all; color: #007bff; font-size: 12px; background-color: #f8f9fa; padding: 10px; border-radius: 4px;">
-    {{activationLink}}
-  </p>
-  
-  <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-  
-  <p class="muted" style="color: #666; font-size: 14px;">Gracias por confiar en nosotros</p>
-  <p class="muted" style="color: #666; font-size: 14px;"><strong>Atentamente, el equipo de Market</strong></p>
-{{/layout}}
+
+<html lang='es'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width,initial-scale=1.0' />
+    <title>Bienvenido a MartinezBoutique</title>
+  </head>
+  <body
+    style='margin:0; padding:0; background-color:#f4f4f7; font-family:Arial, sans-serif; color:#333;'
+  >
+    <table
+      role='presentation'
+      border='0'
+      cellpadding='0'
+      cellspacing='0'
+      width='100%'
+    >
+      <tr>
+        <td align='center' style='padding:20px;'>
+          <table
+            role='presentation'
+            border='0'
+            cellpadding='0'
+            cellspacing='0'
+            width='600'
+            style='background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);'
+          >
+
+            <!-- Header -->
+            <tr>
+              <td
+                style='background-color:#111827; padding:20px; text-align:center; color:#ffffff; font-size:20px; font-weight:bold;'
+              >
+                MartinezBoutique
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style='padding:30px;'>
+                <h1>🎉 ¡Gracias por registrarte en MartinezBoutique!</h1>
+                <p>Hola <strong>{{fullnames}}</strong>,</p>
+                <p>Has creado una cuenta en nuestra web, pero primero
+                  necesitamos que verifiques tu cuenta haciendo clic en el botón
+                  de abajo:</p>
+                <a href='{{activationLink}}' class='btn'>✅ Activar mi cuenta</a>
+                <p style='font-size:14px; color:#666; margin-top:20px;'>Si el
+                  botón no funciona, copia y pega este enlace en tu navegador:</p>
+                <p
+                  style='word-break:break-all; color:#007bff; font-size:12px; background-color:#f8f9fa; padding:10px; border-radius:4px;'
+                >
+                  {{activationLink}}
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style='padding:20px; text-align:center; background-color:#f9fafb; font-size:12px; color:#777;'
+              >
+                ©
+                {{year}}
+                MartinezBoutique. Todos los derechos reservados.<br />
+                Este es un correo automático, por favor no respondas a este
+                mensaje.
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Button style -->
+    <style>
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #111827;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        border-radius: 6px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+      .btn:hover {
+        background-color: #1f2937;
+      }
+    </style>
+  </body>
+</html>

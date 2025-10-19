@@ -34,9 +34,9 @@ let PaymentsService = class PaymentsService {
                 items,
                 external_reference: externalReference,
                 back_urls: {
-                    success: `${process.env.BACKEND_URL}/payment/success`,
-                    failure: `${process.env.BACKEND_URL}/payment/failure`,
-                    pending: `${process.env.BACKEND_URL}/payment/pending`,
+                    success: `${process.env.FRONTEND_URL}/payment/success`,
+                    failure: `${process.env.FRONTEND_URL}/payment/failure`,
+                    pending: `${process.env.FRONTEND_URL}/payment/pending`,
                 },
                 auto_return: 'approved',
                 notification_url: `${process.env.BACKEND_URL}/payment/webhook`,
@@ -64,7 +64,7 @@ let PaymentsService = class PaymentsService {
         }
         else if (payment.status === 'rejected') {
             const order = await this.ordersHelperService.markAsRejected(payment.external_reference, payment);
-            await this.mailService.paymentAprovedEmail(order.id);
+            await this.mailService.paymentRejectedEmail(order.id);
         }
         else if (payment.status === 'refunded') {
             this.ordersHelperService.markAsRefund(payment.external_reference);

@@ -22,15 +22,25 @@ export class AuthController {
   @ApiOperation({ summary: 'Login a user and return access token' })
   @ApiOkResponse({ type: AuthEntity })
   async login(
-    @Body() { email, password }: LoginDto,
+    @Body() { email, password, captchaToken }: LoginDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const payload = await this.authService.login(email, password, req);
+    const payload = await this.authService.login(
+      email,
+      password,
+      captchaToken,
+      req,
+    );
     res.cookie('token', payload.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
+      domain:
+        process.env.NODE_ENV === 'production'
+          ? '.martinezboutique.store'
+          : undefined,
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return payload;
@@ -65,10 +75,20 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
+      domain:
+        process.env.NODE_ENV === 'production'
+          ? '.martinezboutique.store'
+          : undefined,
     });
     return { message: 'Logged out successfully' };
+  }
+
+  @Post('/request-verify')
+  @ApiOkResponse({ description: 'message with value' })
+  requestVerify(@Body() { token }: { token: string }) {
+    return this.authService.verifyRequestReset(token);
   }
 
   @Post('/request-reset')

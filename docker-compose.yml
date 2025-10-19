@@ -1,32 +1,19 @@
-version: "3.8"
-
 services:
-  postgres:
-    image: postgres:13.5
+  mongo:
+    image: mongo
     restart: always
     environment:
-      - POSTGRES_USER=doom
-      - POSTGRES_PASSWORD=mypasword
-      - POSTGRES_DB=mydb
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: market
 
-  backend:
-    build: .
-    container_name: backend_app
-    depends_on:
-      - postgres
+  mongo-express:
+    image: mongo-express
+    restart: always
     ports:
-      - "4000:3000"
+      - 8081:8081
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgres://doom:mypasword@postgres:5432/mydb
-    command: npm run start:prod
-    volumes:
-      - .:/app
-      - /app/node_modules
-
-volumes:
-  postgres:
+      ME_CONFIG_MONGODB_URL: mongodb://root:password123@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: password123

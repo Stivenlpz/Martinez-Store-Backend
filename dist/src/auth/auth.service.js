@@ -17,6 +17,7 @@ const bcrypt = require("bcrypt");
 const users_service_1 = require("../users/users.service");
 const mail_service_1 = require("../mail/mail.service");
 const audits_service_1 = require("../audits/audits.service");
+const axios_1 = require("axios");
 let AuthService = class AuthService {
     prisma;
     jwtService;
@@ -28,16 +29,13 @@ let AuthService = class AuthService {
         this.auditService = auditService;
         this.mailService = mailService;
     }
-    async login(email, password, req) {
+    async login(email, password, captchaToken, req) {
         const user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
-            await this.auditService.register({
-                userId: 'unknown',
-                ip: req.ip,
-                userAgent: req.headers['user-agent'] || 'unknown',
-                success: false,
-            });
             throw new common_1.NotFoundException(`No user found with ${email} email.`);
+        }
+        if (user.isLocked && user.lockedUntil && user.lockedUntil > new Date()) {
+            throw new common_1.UnauthorizedException(`Account locked until ${user.lockedUntil.toISOString()}`);
         }
         if (!user.activated) {
             await this.auditService.register({
@@ -48,16 +46,58 @@ let AuthService = class AuthService {
             });
             throw new common_1.UnauthorizedException('User is inactive.');
         }
+        if (!captchaToken) {
+            throw new common_1.BadRequestException('CAPTCHA token is required.');
+        }
+        const isCaptchaValid = await this.verifyHcaptcha(captchaToken, req.ip);
+        if (!isCaptchaValid) {
+            await this.auditService.register({
+                userId: user.id,
+                ip: req.ip,
+                userAgent: req.headers['user-agent'] || 'unknown',
+                success: false,
+            });
+            throw new common_1.BadRequestException('CAPTCHA verification failed.');
+        }
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid)
+        if (!isPasswordValid) {
+            await this.auditService.register({
+                userId: user.id,
+                ip: req.ip,
+                userAgent: req.headers['user-agent'] || 'unknown',
+                success: false,
+            });
+            const failedAttempts = await this.prisma.loginAudit.count({
+                where: {
+                    userId: user.id,
+                    success: false,
+                    createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) },
+                },
+            });
+            if (failedAttempts >= 5) {
+                await this.prisma.user.update({
+                    where: { id: user.id },
+                    data: {
+                        isLocked: true,
+                        lockedUntil: new Date(Date.now() + 30 * 60 * 1000),
+                    },
+                });
+                throw new common_1.UnauthorizedException('Too many failed attempts. Account locked for 30 minutes.');
+            }
             throw new common_1.UnauthorizedException('Invalid password.');
+        }
+        if (user.isLocked) {
+            await this.prisma.user.update({
+                where: { id: user.id },
+                data: { isLocked: false, lockedUntil: null },
+            });
+        }
         await this.auditService.register({
             userId: user.id,
             ip: req.ip,
             userAgent: req.headers['user-agent'] || 'unknown',
             success: true,
         });
-        await this.mailService.sendLoginEmail(user);
         return {
             message: 'Login successful',
             accessToken: this.jwtService.sign({
@@ -115,6 +155,14 @@ let AuthService = class AuthService {
             },
         });
     }
+    verifyRequestReset(token) {
+        const payload = this.jwtService.verify(token);
+        if (!payload)
+            throw new common_1.UnauthorizedException('Invalid or expired token. ');
+        return {
+            message: 'Verified',
+        };
+    }
     async requestPasswordReset(email) {
         const user = await this.prisma.user.findUnique({ where: { email } });
         if (!user)
@@ -145,6 +193,24 @@ let AuthService = class AuthService {
         catch (error) {
             console.error(error);
             throw new common_1.UnauthorizedException('Invalid or expired token.');
+        }
+    }
+    async verifyHcaptcha(token, ip) {
+        try {
+            const response = await axios_1.default.post('https://hcaptcha.com/siteverify', new URLSearchParams({
+                secret: process.env.HCAPTCHA_SECRET,
+                response: token,
+                remoteip: ip || '',
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            });
+            return response.data.success;
+        }
+        catch (error) {
+            console.error('Error verifying hCaptcha:', error);
+            return false;
         }
     }
 };

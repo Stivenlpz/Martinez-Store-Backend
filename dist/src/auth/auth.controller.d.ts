@@ -7,7 +7,7 @@ import { Request, Response } from 'express';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
-    login({ email, password }: LoginDto, req: Request, res: Response): Promise<{
+    login({ email, password, captchaToken }: LoginDto, req: Request, res: Response): Promise<{
         message: string;
         accessToken: string;
     }>;
@@ -57,6 +57,8 @@ export declare class AuthController {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
     }>;
@@ -103,10 +105,17 @@ export declare class AuthController {
             updatedAt: Date | null;
             city: string | null;
             country: string | null;
+            isLocked: boolean;
+            lockedUntil: Date | null;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
         };
     }>;
     logout(res: Response): {
+        message: string;
+    };
+    requestVerify({ token }: {
+        token: string;
+    }): {
         message: string;
     };
     requestPasswordReset({ email }: RequestResetDto): Promise<{

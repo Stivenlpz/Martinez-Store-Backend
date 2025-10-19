@@ -46,6 +46,20 @@ export declare class AddressController {
         postalCode: string | null;
         isDefault: boolean;
     } | null>;
+    userAddress(id: string): Promise<{
+        id: string;
+        phone: string | null;
+        createdAt: Date;
+        updatedAt: Date | null;
+        city: string;
+        country: string;
+        userId: string;
+        label: string | null;
+        street: string;
+        state: string | null;
+        postalCode: string | null;
+        isDefault: boolean;
+    }[]>;
     update(id: string, updateAddressDto: UpdateAddressDto): Promise<{
         id: string;
         phone: string | null;

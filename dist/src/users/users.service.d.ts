@@ -17,6 +17,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     findAll(): Promise<({
@@ -104,6 +106,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     })[]>;
     findOne(id: string): Promise<{
@@ -179,6 +183,15 @@ export declare class UsersService {
             deliveredAt: Date | null;
             refundedAt: Date | null;
         }[];
+        loginAudits: {
+            id: string;
+            createdAt: Date;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            userId: string;
+            ip: string | null;
+            userAgent: string | null;
+            success: boolean;
+        }[];
     } & {
         id: string;
         email: string;
@@ -191,6 +204,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
@@ -205,6 +220,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     remove(id: string): Promise<{
@@ -219,6 +236,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     me(userId: string): Promise<({
@@ -307,6 +326,15 @@ export declare class UsersService {
             deliveredAt: Date | null;
             refundedAt: Date | null;
         })[];
+        loginAudits: {
+            id: string;
+            createdAt: Date;
+            meta: import("@prisma/client/runtime/library").JsonValue | null;
+            userId: string;
+            ip: string | null;
+            userAgent: string | null;
+            success: boolean;
+        }[];
     } & {
         id: string;
         email: string;
@@ -319,6 +347,8 @@ export declare class UsersService {
         updatedAt: Date | null;
         city: string | null;
         country: string | null;
+        isLocked: boolean;
+        lockedUntil: Date | null;
         meta: import("@prisma/client/runtime/library").JsonValue | null;
     }) | null>;
     getUserOrders(userId: string): Promise<{

@@ -5,19 +5,22 @@ export declare class OrdersHelperService {
     constructor(prisma: PrismaService);
     markAsPaid(orderId: string, payment: PaymentResponse): Promise<{
         items: {
-            name: string;
             id: string;
+            name: string;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
             productId: string;
-            sku: string | null;
             quantity: number;
-            price: number;
             size: string | null;
             color: string | null;
+            sku: string | null;
+            price: number;
+            orderId: string;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date | null;
+        meta: import("@prisma/client/runtime/library").JsonValue | null;
         userId: string;
         totalAmount: number;
         currency: string;
@@ -31,28 +34,28 @@ export declare class OrdersHelperService {
         shippingNotes: string | null;
         history: import("@prisma/client/runtime/library").JsonValue[];
         payment: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date | null;
         canceledAt: Date | null;
         deliveredAt: Date | null;
         refundedAt: Date | null;
-        meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     markAsRejected(orderId: string, payment: PaymentResponse): Promise<{
         items: {
-            name: string;
             id: string;
+            name: string;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
             productId: string;
-            sku: string | null;
             quantity: number;
-            price: number;
             size: string | null;
             color: string | null;
+            sku: string | null;
+            price: number;
+            orderId: string;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date | null;
+        meta: import("@prisma/client/runtime/library").JsonValue | null;
         userId: string;
         totalAmount: number;
         currency: string;
@@ -66,28 +69,28 @@ export declare class OrdersHelperService {
         shippingNotes: string | null;
         history: import("@prisma/client/runtime/library").JsonValue[];
         payment: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date | null;
         canceledAt: Date | null;
         deliveredAt: Date | null;
         refundedAt: Date | null;
-        meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     markAsCancelled(orderId: string, payment: PaymentResponse): Promise<{
         items: {
-            name: string;
             id: string;
+            name: string;
             meta: import("@prisma/client/runtime/library").JsonValue | null;
-            orderId: string;
             productId: string;
-            sku: string | null;
             quantity: number;
-            price: number;
             size: string | null;
             color: string | null;
+            sku: string | null;
+            price: number;
+            orderId: string;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date | null;
+        meta: import("@prisma/client/runtime/library").JsonValue | null;
         userId: string;
         totalAmount: number;
         currency: string;
@@ -101,12 +104,9 @@ export declare class OrdersHelperService {
         shippingNotes: string | null;
         history: import("@prisma/client/runtime/library").JsonValue[];
         payment: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        updatedAt: Date | null;
         canceledAt: Date | null;
         deliveredAt: Date | null;
         refundedAt: Date | null;
-        meta: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
     markAsRefund(orderId: string): void;
 }
