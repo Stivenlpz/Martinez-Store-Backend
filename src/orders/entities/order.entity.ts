@@ -28,6 +28,12 @@ export class OrderEntity implements Order {
   status: OrderStatus;
 
   @ApiProperty({
+    description: 'mercadopago pago id',
+    example: '1231231231',
+  })
+  paymentId: string;
+
+  @ApiProperty({
     description: 'Estado del pago',
     enum: PaymentStatus,
     example: 'UNPAID',

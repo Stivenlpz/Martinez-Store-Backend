@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { PaymentRedirectQueryDto } from './dto/payment-redirect-query.dto';
@@ -55,5 +55,14 @@ export class PaymentsController {
   async webhook(@Body() body: any) {
     await this.paymentsService.handleWebhook(body);
     return { status: 'ok' };
+  }
+
+  @Post('refund/:id')
+  async refund(@Param('id') id: string) {
+    const data = await this.paymentsService.refund(id);
+    return {
+      status: 'ok',
+      data,
+    };
   }
 }

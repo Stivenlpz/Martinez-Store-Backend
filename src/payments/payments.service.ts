@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Injectable } from '@nestjs/common';
-import { MercadoPagoConfig, Payment, Preference } from 'mercadopago';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  MercadoPagoConfig,
+  Payment,
+  Preference,
+  Order,
+  PaymentRefund,
+} from 'mercadopago';
 import { Items } from 'mercadopago/dist/clients/commonTypes';
 import { PreferenceCreateData } from 'mercadopago/dist/clients/preference/create/types';
 import { PrismaService } from 'nestjs-prisma';
@@ -22,7 +28,6 @@ export class PaymentsService {
     });
   }
 
-  // Aquí se crea la preferencia de pago y se retorna el link de pago de mercadopago (init_point)
   async createPreference(items: Items[], externalReference: string) {
     const data: PreferenceCreateData = {
       body: {
@@ -39,25 +44,45 @@ export class PaymentsService {
     };
     const preference = new Preference(this.client);
     const response = await preference.create(data);
+    console.log({
+      a: response.init_point,
+      b: response.sandbox_init_point,
+    });
     return {
       init_point: response.init_point,
       message: 'Preference created successfully',
     };
   }
 
-  // Aquí se valida el pago y se actualiza la orden en la DB.
+  async refund(id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    try {
+      console.log(order);
+      const paymentId = order.paymentId;
+
+      const refund = new PaymentRefund(this.client);
+      const data = await refund.create({
+        payment_id: paymentId,
+      });
+    } catch (error) {
+      console.error('refund error with mercadopago', error);
+    }
+
+    return this.ordersHelperService.markAsRefund(order.id);
+  }
+
+  // todo: refound
   async handleWebhook(response: any) {
-    // console.log('Webhook recibido:', response);
     if (response.type !== 'payment') return;
-    console.log('entro al pago', response);
 
     const payment = await new Payment(this.client).get({
       id: response.data.id,
     });
-    console.log('pago', payment);
 
     if (payment.status === 'approved') {
-      console.log('aprobado !!!!');
       const order = await this.ordersHelperService.markAsPaid(
         payment.external_reference!,
         payment,

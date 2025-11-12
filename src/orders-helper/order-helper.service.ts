@@ -10,7 +10,7 @@ export class OrdersHelperService {
     return await this.prisma.$transaction(async (tx) => {
       const order = await tx.order.findUnique({
         where: { id: orderId },
-        include: { items: true },
+        include: { items: true, user: { include: { addresses: true } } },
       });
       if (!order) throw new NotFoundException(`Order ${orderId} not found`);
 
@@ -26,6 +26,16 @@ export class OrdersHelperService {
         data: {
           status: 'PAID',
           paymentStatus: 'COMPLETED',
+          paymentId: `${payment.id}`,
+          shippingAddress: {
+            connect: {
+              id: order.user.addresses[0].id,
+            },
+          },
+          meta: {
+            paymentId: payment.id,
+            statusDetail: payment.status_detail,
+          },
           history: {
             push: {
               date: new Date(),
@@ -109,7 +119,41 @@ export class OrdersHelperService {
     });
   }
 
-  markAsRefund(orderId: string) {
-    console.log('refunded', orderId);
+  async markAsRefund(orderId: string) {
+    // 1. mark payment as refound
+    // 2. mark order as cancelled?
+    // 3. restore stock (icrease stock)
+    return await this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id: orderId },
+        include: { items: true },
+      });
+      if (!order) throw new NotFoundException(`Order ${orderId} not found`);
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+
+      return await tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: 'REFUNDED',
+          paymentStatus: 'REFUNDED',
+          history: {
+            push: {
+              date: new Date(),
+              from: order.status,
+              by: 'system',
+              to: 'REFUNDED',
+              reason: 'Payment refunded.',
+            },
+          },
+        },
+        include: { items: true },
+      });
+    });
   }
 }
